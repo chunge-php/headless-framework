@@ -83,4 +83,9 @@ return [
     'rate_not_error'=>'Probability configuration error: The total probability must equal 100.',
     'game_not_exist'=>'Game does not exist',
     'user_exists'=>'User already exists',
+    'params_missing' => 'Missing required parameters',
+    'date_range_invalid' => 'Invalid date range: start date must not be later than end date',
+    'date_range_too_large' => 'Date range cannot exceed 366 days',
+    'granularity_invalid' => 'Invalid granularity parameter',
+    'type_invalid' => 'Invalid type parameter',
 ];

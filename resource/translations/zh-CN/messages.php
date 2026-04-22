@@ -84,4 +84,9 @@ return [
     'rate_not_error'=>'概率配置错误：总概率必须等于100',
     'game_not_exist'=>'游戏不存在',
     'user_exists'=>'用户已存在',
+    'params_missing' => '缺失必要参数',
+    'date_range_invalid' => '日期范围无效，开始日期不能晚于结束日期',
+    'date_range_too_large' => '日期跨度不能超过366天',
+    'granularity_invalid' => '聚合粒度参数无效',
+    'type_invalid' => 'type参数无效',
 ];

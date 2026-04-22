@@ -44,10 +44,16 @@
 - **时区**：服务器时区聚合，前端用 `TzManager.formatLocal` 转本地
 - **金额字段**：**字符串**保留 **2 位小数**（如 `"350.60"`、`"0.00"`）
 - **空数据**：`list: []`、数值字段 `0` 或 `"0.00"`、`growth_rate: 0`（不返回 null，不返回 Infinity）
-- **参数缺失**：`code: 1001`，`msg: params_missing`
-- **日期范围非法**（start > end）：`code: 404`，`msg: date_range_invalid`
-- **日期跨度超 366 天**：`code: 404`，`msg: date_range_too_large`
-- **granularity 非法**：`code: 1001`
+
+**错误码**（已加入 `app/ErrorCode.php` + zh-CN/en-US 翻译）：
+
+| code | msg key | 中文 / EN |
+|------|---------|----------|
+| 2032 | `params_missing` | 缺失必要参数 / Missing required parameters |
+| 2033 | `date_range_invalid` | 日期范围无效（start > end）/ Invalid date range |
+| 2034 | `date_range_too_large` | 日期跨度超过 366 天 / Date range cannot exceed 366 days |
+| 2035 | `granularity_invalid` | 聚合粒度参数无效 / Invalid granularity parameter |
+| 2036 | `type_invalid` | type 参数无效 / Invalid type parameter |
 
 ---
 
@@ -410,7 +416,8 @@ export function getRecentActivity(parameter: any = {}): Promise<any> {
 - [ ] `granularity=week` 桶标签为该周周一（ISO 8601）
 - [ ] `compare.growth_rate` 无历史时返回 0（不返回 Infinity / null）
 - [ ] Token 失效返回 `code: 1002`
-- [ ] 日期跨度超 366 天明确报错
+- [ ] 日期跨度超 366 天返回 `code: 2034`
+- [ ] 参数缺失返回 `code: 2032`，日期范围非法返回 `code: 2033`
 
 ---
 

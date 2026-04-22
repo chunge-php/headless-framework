@@ -11,10 +11,10 @@ class AnalysisController
     {
         $all = $request->all();
         if (empty($all['start_date']) || empty($all['end_date'])) {
-            return error('params_missing', info_err);
+            return error('params_missing', params_missing);
         }
         if ($all['start_date'] > $all['end_date']) {
-            return error('date_range_invalid', 404);
+            return error('date_range_invalid', date_range_invalid);
         }
         $all['jwtUserId'] = $request->jwtUserId;
         return success($fn->overview($all));
@@ -24,16 +24,16 @@ class AnalysisController
     {
         $all = $request->all();
         if (empty($all['start_date']) || empty($all['end_date']) || empty($all['granularity'])) {
-            return error('params_missing', info_err);
+            return error('params_missing', params_missing);
         }
         if ($all['start_date'] > $all['end_date']) {
-            return error('date_range_invalid', 404);
+            return error('date_range_invalid', date_range_invalid);
         }
         if ($this->diffDays($all['start_date'], $all['end_date']) > 366) {
-            return error('date_range_too_large', 404);
+            return error('date_range_too_large', date_range_too_large);
         }
         if (!in_array($all['granularity'], ['day', 'week', 'month'])) {
-            return error('granularity_invalid', info_err);
+            return error('granularity_invalid', granularity_invalid);
         }
         $all['jwtUserId'] = $request->jwtUserId;
         return success($fn->statTrend($all));
@@ -43,16 +43,16 @@ class AnalysisController
     {
         $all = $request->all();
         if (empty($all['start_date']) || empty($all['end_date']) || empty($all['granularity'])) {
-            return error('params_missing', info_err);
+            return error('params_missing', params_missing);
         }
         if ($all['start_date'] > $all['end_date']) {
-            return error('date_range_invalid', 404);
+            return error('date_range_invalid', date_range_invalid);
         }
         if ($this->diffDays($all['start_date'], $all['end_date']) > 366) {
-            return error('date_range_too_large', 404);
+            return error('date_range_too_large', date_range_too_large);
         }
         if (!in_array($all['granularity'], ['day', 'week', 'month'])) {
-            return error('granularity_invalid', info_err);
+            return error('granularity_invalid', granularity_invalid);
         }
         $all['jwtUserId'] = $request->jwtUserId;
         return success($fn->costTrend($all));
@@ -63,7 +63,7 @@ class AnalysisController
         $all = $request->all();
         $type = $all['type'] ?? '';
         if (!in_array($type, ['balance', 'monthCost', 'sent', 'contacts'])) {
-            return error('type_invalid', info_err);
+            return error('type_invalid', type_invalid);
         }
         $all['jwtUserId'] = $request->jwtUserId;
         return success($fn->kpiSparkline($all));
