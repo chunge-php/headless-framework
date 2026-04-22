@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Low balance alert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      /* 基础样式，兼容主流客户端 */
+      body { margin:0; padding:0; background:#f6f7fb; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif; color:#111; }
+      .wrap { max-width:640px; margin:0 auto; padding:24px; }
+      .card { background:#fff; border-radius:10px; padding:24px; border:1px solid #eaeaea; }
+      .btn { display:inline-block; padding:12px 18px; text-decoration:none; border-radius:8px; background:#111; color:#fff; }
+      .muted { color:#666; font-size:12px; }
+      .kpi { background:#fafafa; border:1px solid #eee; border-radius:8px; padding:12px 16px; margin:12px 0; }
+      .kpi div { margin:4px 0; }
+      .spacer { height:16px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card">
+        <p>Hi {{customer_name}},</p>
+        <p>As of <strong>{{timestamp_et}}</strong> (ET), your account balance is
+          <strong>{{balance_formatted}}</strong>, which is below your alert level of
+          <strong>{{threshold_formatted}}</strong>.</p>
+
+        <div class="kpi">
+          <div><strong>Account:</strong> ID: {{account_id}}</div>
+          <div><strong>Current balance:</strong> {{balance_formatted}}</div>
+          <div><strong>Alert level:</strong> {{threshold_formatted}}</div>
+        </div>
+
+        <p>
+          <a class="btn" href="{{add_funds_url}}" target="_blank" rel="noopener">Add funds</a>
+        </p>
+        <div class="spacer"></div>
+        <p class="muted">
+          Want to change how you’re notified?
+          <a href="{{add_funds_url}}" target="_blank" rel="noopener">Update alert settings</a>.
+        </p>
+
+        <p class="muted">
+          Times shown in Eastern Time (America/New_York). This is a service notification from BB365.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

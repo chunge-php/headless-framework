@@ -1,0 +1,11 @@
+<?php
+
+namespace DummyNamespace;
+
+class DummyClass extends BaseModel
+{
+  //DummyDescribe
+  //begin_fillable
+
+  //end_fillable
+}

@@ -1,0 +1,11 @@
+/runtime
+/.idea
+/.vscode
+/vendor
+*.log
+/tests/tmp
+/tests/.phpunit.result.cache
+/public/uploads/*
+/funNLP
+/node_modules
+.env

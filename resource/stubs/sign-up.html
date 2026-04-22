@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <title>Your verification code</title>
+    <style>
+      @media (prefers-color-scheme: dark) {
+        .bg { background: #0b0f19 !important; }
+        .card { background: #121a2a !important; }
+        .text { color: #e9eefc !important; }
+        .muted { color: #b7c2e6 !important; }
+        .codeBox { background: #0f1626 !important; border-color: #22304d !important; }
+        .btn { background: #3b82f6 !important; }
+      }
+    </style>
+  </head>
+
+  <body style="margin:0; padding:0; background:#f4f6fb; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
+    <!-- Preheader -->
+    <div style="display:none; font-size:1px; color:#f4f6fb; line-height:1px; max-height:0; max-width:0; opacity:0; overflow:hidden;">
+      Your registration code is {{code}}. It expires in 5 minutes.
+    </div>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f6fb;" class="bg">
+      <tr>
+        <td align="center" style="padding:28px 12px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%; max-width:600px;">
+            <!-- Header -->
+           
+
+            <!-- Card -->
+            <tr>
+              <td style="background:#ffffff; border:1px solid #e6eaf2; border-radius:14px; padding:24px;" class="card">
+                <div style="font-size:18px; font-weight:800; color:#0f172a; margin:0 0 10px 0;" class="text">
+                  Your registration verification code
+                </div>
+
+                <div style="font-size:14px; color:#475569; line-height:1.6; margin:0 0 16px 0;" class="muted">
+                  Please enter the code below to complete your registration. This code will expire in
+                  <strong style="color:#0f172a;" class="text">5 minutes</strong>.
+                </div>
+
+                <!-- REQUIRED TEXT -->
+             
+                <!-- Code box -->
+                <div
+                  style="background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px; padding:16px; text-align:center; margin:0 0 14px 0;"
+                  class="codeBox"
+                >
+                  <div
+                    id="otp"
+                    style="font-size:34px; letter-spacing:6px; font-weight:900; color:#0f172a; font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New',monospace;"
+                    class="text"
+                  >
+                    {{code}}
+                  </div>
+
+                  <!-- Copy button (JS may be blocked by many email clients; still safe to include) -->
+                  <div style="margin-top:14px;">
+                    <a
+                      href="#"
+                      onclick="(function(e){try{e.preventDefault();var t='{{CODE}}'; if(navigator&&navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t);} else {var i=document.getElementById('otp'); var r=document.createRange(); r.selectNodeContents(i); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges();} var b=document.getElementById('copyHint'); if(b){b.innerHTML='Copied.';}}catch(_){}})(event);"
+                      style="display:inline-block; background:#2563eb; color:#ffffff; text-decoration:none; padding:10px 16px; border-radius:10px; font-size:14px; font-weight:700;"
+                      class="btn"
+                    >
+                      Copy code
+                    </a>
+                    <div id="copyHint" style="font-size:12px; color:#64748b; margin-top:8px;" class="muted">
+                      Tip: You can also select and copy the code manually.
+                    </div>
+                  </div>
+                </div>
+
+                <div style="font-size:12px; color:#64748b; line-height:1.6;" class="muted">
+                  If you didn’t request this code, you can safely ignore this email.
+                </div>
+
+             
+              </td>
+            </tr>
+
+            <!-- Footer -->
+         
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

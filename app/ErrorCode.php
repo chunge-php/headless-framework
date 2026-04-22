@@ -1,0 +1,35 @@
+<?php
+
+const info_err = 1001;//常规错误
+const token_error = 1002;//token错误
+const user_info_not = 2001;//用户信息不存在
+const user_state_zero = 2002;//用户状态为禁用
+const user_status_zero = 2003;//此账号已停用
+const user_pwd_not = 2004;//密码错误
+const user_provider_not = 2005;//登录方式未开通
+const user_pwd_empty = 2006;//密码不能为空
+const code_get_total = 2007;//今日获取验证码次数已达到上限
+const code_send_err = 2008;//验证码发送失败
+const sms_verify_err = 2009;//验证码错误
+const authorization_code_not=2010;//授权码无效
+const google_login_err = 2011;//谷歌登录失败
+const email_exists = 2012;//邮箱已存在
+const missing_encryption_data = 2013;//解密失败
+const token_ip_mismatch = 2014;//Token与当前IP不匹配
+const token_expired = 2015;//Token已过期
+const token_invalid = 2016;//Token签名无效
+const token_verification_failed = 2017;//Token验证失败
+const function_not_found = 2018;//功能点未找到
+const id_not_select  = 2019;//请选择编号id
+const auto_type_error = 2020;//请选择发送类型
+const not_find_file = 2021;//请选择文件
+const invalid_parameters = 2022;//上传文件失败无效参数
+const fail_to_upload = 2023;//上传文件失败
+const import_error = 2024;//导入失败
+const bing_card_not = 2025;//绑定失败
+const card_not = 2026;//卡片不存在
+const user_type_rule = 2027;//权限不足
+const phone_format_error = 2028;//手机号格式有误
+const exist_sensitive = 2029;//存在敏感词
+const google_bind_err = 2030;//google绑定失败
+const google_bind_not = 2031;//已被其他用户绑定

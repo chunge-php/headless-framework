@@ -1,0 +1,55 @@
+下面这份清单按“必备 / 强烈推荐 / 业务可选”分层给你，装在启动 webman 的那套 PHP-CLI 上（php -m 能看到才算生效）。
+
+必备（运行稳定性）
+
+pcntl、posix（守护/多进程；Linux 下必须启用）
+
+openssl（HTTPS、加解密）
+
+mbstring（多字节字符串）
+
+json（几乎所有框架必用）
+
+pdo、pdo_mysql（或你实际用的 DB 驱动）
+
+fileinfo（上传/MIME 判定）
+
+强烈推荐（性能 & 生产部署）
+
+opcache（脚本缓存）
+
+开启 CLI：opcache.enable_cli=1（webman 是 CLI 进程）
+
+建议：opcache.validate_timestamps=1、opcache.revalidate_freq=2
+
+event/ev/libevent（三选一，I/O 事件循环更高效，优于默认 select）
+
+redis（PhpRedis 扩展）——做缓存/队列/限流；你已有用到
+
+bcmath 或 gmp（大整数/精度计算）
+
+intl（本地化、日期数字格式）
+
+curl（HTTP 调用）
+
+zip（压缩/导出）
+
+sockets（底层网络/WS 相关场景更灵活）
+
+业务可选（按需）
+
+imagick 或 gd（图片处理/缩略图/验证码）
+
+exif（处理图片 EXIF，常见于上传）
+
+sodium（libsodium，现代密码学/签名）
+
+apcu（本机共享内存缓存，单机优化）
+
+msgpack（更快的序列化，配合 Redis/队列）
+
+yaml（读写 YAML 配置）
+
+soap（如果要对接老系统）
+
+mongodb、amqp、memcached（用到相应中间件再装）

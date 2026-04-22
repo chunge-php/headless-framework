@@ -1,0 +1,19 @@
+{
+  "name": "headless-framework",
+  "version": "1.0.0",
+  "description": "php webman module:check",
+  "main": "index.js",
+  "scripts": {
+    "build:sensitive": "node resource/scripts/node.js",
+    "aes": "node resource/scripts/aes.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "naughty-words": "^1.2.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
+}
