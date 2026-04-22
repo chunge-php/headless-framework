@@ -2,10 +2,43 @@
 
 namespace app\modules\analysis\fns;
 
+use app\modules\game\model\GameLog;
+use app\modules\jobTask\model\JobDefinition;
+use app\modules\sms\body\model\SmsBatchLot;
+use app\modules\sms\body\model\SmsChannelLog;
+use app\modules\user\addressbook\model\AddressBook;
+use app\modules\user\wallet\model\Wallet;
+use app\modules\user\wallet\model\WalletTopupLog;
 use support\Db;
 
 class AnalysisFn
 {
+    protected $smsBatchLot;
+    protected $smsChannelLog;
+    protected $wallet;
+    protected $walletTopupLog;
+    protected $addressBook;
+    protected $jobDefinition;
+    protected $gameLog;
+
+    public function __construct(
+        SmsBatchLot $smsBatchLot,
+        SmsChannelLog $smsChannelLog,
+        Wallet $wallet,
+        WalletTopupLog $walletTopupLog,
+        AddressBook $addressBook,
+        JobDefinition $jobDefinition,
+        GameLog $gameLog
+    ) {
+        $this->smsBatchLot = $smsBatchLot;
+        $this->smsChannelLog = $smsChannelLog;
+        $this->wallet = $wallet;
+        $this->walletTopupLog = $walletTopupLog;
+        $this->addressBook = $addressBook;
+        $this->jobDefinition = $jobDefinition;
+        $this->gameLog = $gameLog;
+    }
+
     public function overview($info): array
     {
         $uid = (int)$info['jwtUserId'];
@@ -13,35 +46,35 @@ class AnalysisFn
         $end = $info['end_date'];
         [$prevStart, $prevEnd] = $this->prevEqualPeriod($start, $end);
 
-        $balance = Db::table('wallets')->where('uid', $uid)->value('balance');
+        $balance = $this->wallet->where('uid', $uid)->value('balance');
         $balance = $balance === null ? '0.00' : $this->money((string)$balance);
 
-        $monthCur = (float)Db::table('sms_batch_lots')
+        $monthCur = (float)$this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end])
             ->sum('total_money');
-        $monthPrev = (float)Db::table('sms_batch_lots')
+        $monthPrev = (float)$this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$prevStart, $prevEnd])
             ->sum('total_money');
 
-        $sentCur = (int)Db::table('sms_batch_lots')
+        $sentCur = (int)$this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end])
             ->count();
-        $sentPrev = (int)Db::table('sms_batch_lots')
+        $sentPrev = (int)$this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$prevStart, $prevEnd])
             ->count();
 
-        $contactCur = (int)Db::table('address_books')->where('uid', $uid)->count();
+        $contactCur = (int)$this->addressBook->where('uid', $uid)->count();
         $days = $this->diffDays($start, $end);
-        $contactPrev = (int)Db::table('address_books')
+        $contactPrev = (int)$this->addressBook
             ->where('uid', $uid)
             ->where('created_at', '<', date('Y-m-d 00:00:00', strtotime("-{$days} days")))
             ->count();
 
-        $taskRows = Db::table('job_definitions')
+        $taskRows = $this->jobDefinition
             ->where('uid', $uid)
             ->selectRaw('run_status, COUNT(*) as cnt')
             ->groupBy('run_status')
@@ -85,14 +118,14 @@ class AnalysisFn
         $end = $info['end_date'];
         $granularity = $info['granularity'];
 
-        $q = Db::table('sms_batch_lots')
+        $q = $this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end]);
         if (isset($info['subscribe_type']) && (int)$info['subscribe_type'] > -1) {
-            $q->where('subscribe_type', (int)$info['subscribe_type']);
+            $q = $q->where('subscribe_type', (int)$info['subscribe_type']);
         }
         if (isset($info['send_type']) && (int)$info['send_type'] > -1) {
-            $q->where('send_type', (int)$info['send_type']);
+            $q = $q->where('send_type', (int)$info['send_type']);
         }
         $rows = $q->selectRaw('DATE(created_at) as d, COUNT(*) as sent_count, SUM(success_total) as success_count, SUM(error_total) as failed_count, SUM(consume_number) as consume_number')
             ->groupBy('d')
@@ -133,14 +166,14 @@ class AnalysisFn
         }
 
         [$prevStart, $prevEnd] = $this->prevEqualPeriod($start, $end);
-        $prevQ = Db::table('sms_batch_lots')
+        $prevQ = $this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$prevStart, $prevEnd]);
         if (isset($info['subscribe_type']) && (int)$info['subscribe_type'] > -1) {
-            $prevQ->where('subscribe_type', (int)$info['subscribe_type']);
+            $prevQ = $prevQ->where('subscribe_type', (int)$info['subscribe_type']);
         }
         if (isset($info['send_type']) && (int)$info['send_type'] > -1) {
-            $prevQ->where('send_type', (int)$info['send_type']);
+            $prevQ = $prevQ->where('send_type', (int)$info['send_type']);
         }
         $prevTotalSent = (int)$prevQ->count();
 
@@ -164,11 +197,11 @@ class AnalysisFn
         $end = $info['end_date'];
         $granularity = $info['granularity'];
 
-        $q = Db::table('sms_batch_lots')
+        $q = $this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end]);
         if (isset($info['send_type']) && (int)$info['send_type'] > -1) {
-            $q->where('send_type', (int)$info['send_type']);
+            $q = $q->where('send_type', (int)$info['send_type']);
         }
         $rows = $q->selectRaw("
                 DATE(created_at) as d,
@@ -215,11 +248,11 @@ class AnalysisFn
         }
 
         [$prevStart, $prevEnd] = $this->prevEqualPeriod($start, $end);
-        $prevQ = Db::table('sms_batch_lots')
+        $prevQ = $this->smsBatchLot
             ->where('uid', $uid)
             ->whereBetween(Db::raw('DATE(created_at)'), [$prevStart, $prevEnd]);
         if (isset($info['send_type']) && (int)$info['send_type'] > -1) {
-            $prevQ->where('send_type', (int)$info['send_type']);
+            $prevQ = $prevQ->where('send_type', (int)$info['send_type']);
         }
         $prevTotalCost = (float)$prevQ->sum('total_money');
 
@@ -250,7 +283,7 @@ class AnalysisFn
         $data = array_fill(0, 30, 0);
 
         if ($type === 'sent') {
-            $rows = Db::table('sms_batch_lots')
+            $rows = $this->smsBatchLot
                 ->where('uid', $uid)
                 ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end])
                 ->selectRaw('DATE(created_at) as d, COUNT(*) as cnt')
@@ -261,7 +294,7 @@ class AnalysisFn
                 $data[$i] = (int)($rows[$d] ?? 0);
             }
         } elseif ($type === 'monthCost') {
-            $rows = Db::table('sms_batch_lots')
+            $rows = $this->smsBatchLot
                 ->where('uid', $uid)
                 ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end])
                 ->selectRaw('DATE(created_at) as d, SUM(total_money) as val')
@@ -273,13 +306,13 @@ class AnalysisFn
             }
         } elseif ($type === 'contacts') {
             foreach ($days as $i => $d) {
-                $data[$i] = (int)Db::table('address_books')
+                $data[$i] = (int)$this->addressBook
                     ->where('uid', $uid)
                     ->where('created_at', '<=', $d . ' 23:59:59')
                     ->count();
             }
         } elseif ($type === 'balance') {
-            $rows = Db::table('wallet_topup_logs')
+            $rows = $this->walletTopupLog
                 ->where('uid', $uid)
                 ->whereBetween(Db::raw('DATE(created_at)'), [$start, $end])
                 ->orderBy('id', 'asc')
@@ -291,7 +324,7 @@ class AnalysisFn
                 $d = substr($r['created_at'], 0, 10);
                 $dayLast[$d] = (float)$r['after_balance_cents'];
             }
-            $currentBalance = (float)Db::table('wallets')->where('uid', $uid)->value('balance');
+            $currentBalance = (float)$this->wallet->where('uid', $uid)->value('balance');
             $last = $currentBalance;
             for ($i = 29; $i >= 0; $i--) {
                 $d = $days[$i];
@@ -317,17 +350,17 @@ class AnalysisFn
     public function gameStat($info): array
     {
         $uid = (int)$info['jwtUserId'];
-        $participants = (int)Db::table('sms_channel_logs')
+        $participants = (int)$this->smsChannelLog
             ->where('uid', $uid)
             ->where('channel_type', 3)
             ->count();
-        $winners = (int)Db::table('game_logs')
+        $winners = (int)$this->gameLog
             ->where('uid', $uid)
             ->where('result', '<>', '')
             ->where('result', '<>', '未中奖')
             ->count();
         $winRate = $participants > 0 ? round($winners * 100 / $participants, 1) : 0;
-        $weeklyNew = (int)Db::table('sms_channel_logs')
+        $weeklyNew = (int)$this->smsChannelLog
             ->where('uid', $uid)
             ->where('channel_type', 3)
             ->where('created_at', '>=', date('Y-m-d 00:00:00', strtotime('-6 days')))
@@ -343,9 +376,9 @@ class AnalysisFn
     public function typeDistribution($info): array
     {
         $uid = (int)$info['jwtUserId'];
-        $q = Db::table('sms_batch_lots')->where('uid', $uid);
+        $q = $this->smsBatchLot->where('uid', $uid);
         if (!empty($info['start_date']) && !empty($info['end_date'])) {
-            $q->whereBetween(Db::raw('DATE(created_at)'), [$info['start_date'], $info['end_date']]);
+            $q = $q->whereBetween(Db::raw('DATE(created_at)'), [$info['start_date'], $info['end_date']]);
         }
         $rows = $q->selectRaw('send_type, SUM(consume_number) as cnt')
             ->groupBy('send_type')
@@ -381,18 +414,18 @@ class AnalysisFn
     public function recentActivity($info, $limit = 10, $offset = 0): array
     {
         $uid = (int)$info['jwtUserId'];
-        $q = Db::table('sms_batch_lots')
+        $where = $this->smsBatchLot
             ->where('uid', $uid)
             ->select([
                 'id', 'code', 'content', 'subject', 'status', 'total_money',
                 'success_total', 'error_total', 'consume_number',
                 'subscribe_type', 'send_type', 'created_at', 'updated_at',
             ]);
-        $total = (int)$q->count();
+        $total = (int)$where->count();
         if ($total < 1) {
             return ['total' => 0, 'list' => []];
         }
-        $rows = $q->orderBy('updated_at', 'desc')
+        $rows = $where->orderBy('updated_at', 'desc')
             ->limit($limit)
             ->offset($offset)
             ->get()
